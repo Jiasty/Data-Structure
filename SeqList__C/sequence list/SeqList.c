@@ -39,7 +39,8 @@ void CheckCapacity(SeqList* psl)
         if (tmp == NULL) //可能申请失败所以得判断一下
 		{
 			perror("realloc fail");
-			return;
+			//return;
+			exit(-1);
 		}
 
         psl->array = tmp;
