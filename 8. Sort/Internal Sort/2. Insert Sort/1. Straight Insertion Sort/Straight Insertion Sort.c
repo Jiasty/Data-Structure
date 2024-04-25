@@ -39,7 +39,7 @@ void InsertSort1(int* arr, int n)
 //方法二:用下标进行比较，挪动数据赋值覆盖
 void InsertSort2(int* arr, int n)
 {
-    for(int i = 0; i < n - 1; i++)  //注意边界的控制，自行考虑用哪还种
+    for(int i = 0; i < n - 1; i++)  //注意边界的控制，自行考虑用哪种，此处注意，不是i < n
     {
         int end = i;
         int tmp = arr[end + 1];
