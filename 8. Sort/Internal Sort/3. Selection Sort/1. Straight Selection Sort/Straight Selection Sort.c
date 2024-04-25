@@ -17,7 +17,7 @@ int main()
     return 0;
 }
 
-//方法一:从头往后找
+//方法一:从头往后找最小
 void SelectionSort1(int* arr, int n)
 {
     for(int i = 0; i < n; i++)
@@ -32,7 +32,7 @@ void SelectionSort1(int* arr, int n)
     }
 }
 
-//方法二:前后一起开始找
+//方法二:前后一起开始找，前换小，后换大
 void SelectionSort2(int* arr, int n)
 {
 

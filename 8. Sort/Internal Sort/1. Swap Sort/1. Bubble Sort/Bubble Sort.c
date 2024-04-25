@@ -1,7 +1,7 @@
 #include<stdio.h>
 #include<stdbool.h>
 
-void BubbleSort(int* a, int n);
+void BubbleSort(int* arr, int n);
 void Swap(int* n1, int* n2);
 
 int main()
@@ -13,16 +13,20 @@ int main()
     return 0;
 }
 
-void BubbleSort(int* a, int n)
+//时间复杂度:O(N ^ 2)
+//最好的情况:O(N)
+//在数据十分接近有序的情况，冒泡排序的效率很高
+//冒泡排序具有稳定性
+void BubbleSort(int* arr, int n)
 {
-	for (int j = 0; j < n; j++)  // 外层循环控制趟数和影响内层循环每趟的长度
+	for (int j = 0; j < n; j++)  // 外层循环控制趟数（影响内层循环每趟的长度）
 	{
-		bool exchange = false;  //可能中间就已经排完了，如果为false就直接跳出循环
+		bool exchange = false;  //可能中间就已经排完了，如果为false就直接跳出循环（保证了最好的情况）
 		for (int i = 0; i < n - j - 1; i++)  //每趟循环长度由趟数决定
 		{
-			if (a[i] > a[i + 1])
+			if (arr[i] > arr[i + 1])
 			{
-				Swap(&a[i], &a[i + 1]);
+				Swap(&arr[i], &arr[i + 1]);
 				exchange = true;
 			}
 		}
