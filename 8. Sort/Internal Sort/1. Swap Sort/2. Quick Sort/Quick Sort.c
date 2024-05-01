@@ -4,6 +4,9 @@ void Hoare_QuickSort(int* arr, int begin, int end);
 void Dig_QuickSort();
 void Pointer_QuickSort();
 
+int PartSort1(int* arr, int begin, int end);
+int PartSort2();
+int PartSort3();
 int GetMidi(int* arr, int begin, int end);
 void Swap(int* p1, int* p2);
 
@@ -24,7 +27,8 @@ int main()
 }
 
 
-//时间复杂度:
+//时间复杂度:O(NlogN)
+//最坏的情况:O(N ^ 2)  当完全有序时
 //快排适合重复数据比较多的情况,不适合有序的情况（因为每次取key都是第一个数）,为了解决这个问题可以采用三数取中，快速找到中间的key
 
 //思路:定第一个数为key，然后右指针先找比key小的数，然后左指针找比key大的数，再交换，
@@ -35,6 +39,27 @@ void Hoare_QuickSort(int *arr, int begin, int end) //由于快排为递归，如
     if(begin >= end) //n == 1或者不存在（>）时结束
         return;
 
+    int keyi = PartSort1(arr, begin, end);
+    
+    Hoare_QuickSort(arr, begin, keyi - 1);
+    Hoare_QuickSort(arr, keyi + 1, end);
+}
+
+//挖坑法
+void Dig_QuickSort()
+{
+
+}
+
+//前后指针法（）
+void Pointer_QuickSort()
+{
+
+}
+
+//霍尔版本
+int PartSort1(int* arr, int begin, int end)
+{
     int midi = GetMidi(arr, begin, end);
     Swap(&arr[midi], &arr[begin]);//快排如果中间数做key十分麻烦，所以三数取中后换到begin位置！！！！！
 
@@ -61,18 +86,26 @@ void Hoare_QuickSort(int *arr, int begin, int end) //由于快排为递归，如
 
     Swap(&arr[keyi], &arr[right]);
     keyi = left;
-
-    //[begin, keyi - 1] kei [keyi + 1, end]
-    Hoare_QuickSort(arr, begin, keyi - 1);
-    Hoare_QuickSort(arr, keyi + 1, end);
+    return keyi;
+    //当区间数据量小于一定程度时继续递归消耗很大，可以采用插入排序进行小区间优化
+    //release下其实没啥效果
+    // if(end - begin + 1 <= 10)
+    // {
+    //     InsertSort(arr + begin, end - begin + 1);
+    // }
+    // else
+    // {
+    //     //...
+    // }
+    //[begin, keyi - 1] kei [keyi + 1, end] 
 }
-
-void Dig_QuickSort()
+//挖坑法
+int PartSort2()
 {
 
 }
-
-void Pointer_QuickSort()
+//前后指针法
+int PartSort3()
 {
 
 }
