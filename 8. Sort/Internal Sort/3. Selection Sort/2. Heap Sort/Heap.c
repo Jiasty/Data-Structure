@@ -119,12 +119,12 @@ void AdjustDown(HeapDataType* a, int size, int parent)
     while(child < size)
     {
         //判断两兄弟大小再更新child
-        if(a[child] > a[child + 1] && child + 1 < size) //child + 1 < size 保证极端情况下右孩子存在
+        if(a[child] < a[child + 1] && child + 1 < size) //child + 1 < size 保证极端情况下右孩子存在
         {
             ++child;
         }
 
-        if(a[child] < a[parent])
+        if(a[child] > a[parent])
         {
             Swap(&a[child], &a[parent]);
             parent = child;
