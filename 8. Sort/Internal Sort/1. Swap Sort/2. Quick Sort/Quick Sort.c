@@ -1,12 +1,12 @@
 #include<stdio.h>
+#include"Stack.h"
 
-void Hoare_QuickSort(int* arr, int begin, int end);
-void Dig_QuickSort();
-void Pointer_QuickSort();
+void QuickSort(int* arr, int begin, int end);
+void QuickSortNonR(int* arr, int begin, int end);
 
 int PartSort1(int* arr, int begin, int end);
-int PartSort2();
-int PartSort3();
+int PartSort2(int *arr, int begin, int end);
+int PartSort3(int *arr, int begin, int end);
 int GetMidi(int* arr, int begin, int end);
 void Swap(int* p1, int* p2);
 
@@ -15,9 +15,9 @@ int main()
 {
     //int a[] = {6, 1, 2, 7, 9, 3, 4, 5, 10, 8};
     int a[] = {6, 1, 2, 6, 7, 9, 6, 3, 4, 5, 10, 8};
-    Hoare_QuickSort(a, 0, sizeof(a) / sizeof(a[0]) - 1);
-    //Dig_QuickSort();
-    //Pointer_QuickSort();
+
+    //QuickSort(a, 0, sizeof(a) / sizeof(a[0]) - 1);
+    QuickSortNonR(a, 0, sizeof(a) / sizeof(a[0]) - 1);
 	for (int i = 0; i < sizeof(a) / sizeof(a[0]); i++)
 	{
 		printf("%d ", a[i]);
@@ -30,34 +30,60 @@ int main()
 //时间复杂度:O(NlogN)
 //最坏的情况:O(N ^ 2)  当完全有序时
 //快排适合重复数据比较多的情况,不适合有序的情况（因为每次取key都是第一个数）,为了解决这个问题可以采用三数取中，快速找到中间的key
-
-//思路:定第一个数为key，然后右指针先找比key小的数，然后左指针找比key大的数，再交换，
-//最后两指针相遇的数与key交换（此时一定比key小），原因是右指针先开始行动
-//霍尔版本的快排坑比较多，不好控制
-void Hoare_QuickSort(int *arr, int begin, int end) //由于快排为递归，如果传数组个数就不好递归
+void QuickSort(int *arr, int begin, int end) //由于快排为递归，如果传数组个数就不好递归
 {
     if(begin >= end) //n == 1或者不存在（>）时结束
         return;
 
-    int keyi = PartSort1(arr, begin, end);
+    int keyi = PartSort3(arr, begin, end);
     
-    Hoare_QuickSort(arr, begin, keyi - 1);
-    Hoare_QuickSort(arr, keyi + 1, end);
+    QuickSort(arr, begin, keyi - 1);
+    QuickSort(arr, keyi + 1, end);
 }
 
-//挖坑法
-void Dig_QuickSort()
+//借助栈来模拟递归的过程，将递归区间入栈
+void QuickSortNonR(int* arr, int begin, int end)
 {
+    Stack ST;
+    StackInit(&ST);
 
+    //入左右区间
+    StackPush(&ST, end);
+    StackPush(&ST, begin);
+
+    while(!StackEmpty(&ST))
+    {
+        //出左右区间并记录
+        int left = StackTop(&ST);
+        StackPop(&ST);
+        int right = StackTop(&ST);
+        StackPop(&ST);
+
+        //进行单趟排序
+        int keyi = PartSort3(arr, left, right);
+
+        //[begin, keyi - 1] keyi [keyi + 1, end]
+        //再次入区间
+        if(left < keyi - 1) //判断为了！！！！！！
+        {
+            StackPush(&ST, keyi - 1);
+            StackPush(&ST, left);
+        }
+        if(right > keyi + 1)
+        {
+            StackPush(&ST, end);
+            StackPush(&ST, keyi + 1);
+        }
+    }
+
+    StackDestroy(&ST);
 }
 
-//前后指针法（）
-void Pointer_QuickSort()
-{
-
-}
-
+///////////////////////////////////////////////////////////////////////
 //霍尔版本
+//思路:定第一个数为key，然后右指针先找比key小的数，然后左指针找比key大的数，再交换，
+//最后两指针相遇的数与key交换（此时一定比key小），原因是右指针先开始行动
+//霍尔版本的快排坑比较多，不好控制
 int PartSort1(int* arr, int begin, int end)
 {
     int midi = GetMidi(arr, begin, end);
@@ -97,19 +123,75 @@ int PartSort1(int* arr, int begin, int end)
     // {
     //     //...
     // }
-    //[begin, keyi - 1] kei [keyi + 1, end] 
+    //[begin, keyi - 1] keyi [keyi + 1, end] 
 }
 //挖坑法
-int PartSort2()
+//思路:单趟定第一个数为key，将其定为坑，右边开始找小，交换填坑，形成新的坑位，左边开始找大，交换填坑，
+//直到两指针相遇时中止，将原本的key填入到相遇的坑位。
+int PartSort2(int* arr, int begin, int end)
 {
+    int midi = GetMidi(arr, begin, end);
+    Swap(&arr[midi], &arr[begin]);
 
+    int key = arr[begin];
+    int hole = begin;
+
+    while(begin < end)
+    {
+        //右边找小填左边的坑
+        while(begin < end && arr[end] >= key)
+        {
+            --end;
+        }
+        arr[hole] = arr[end]; //此处挖坑法直接覆盖数据就好，不用记录下标
+        hole = end; //更新坑位
+        while(begin < end && arr[begin] <= key)
+        {
+            ++begin;
+        }
+        arr[hole] = arr[begin];
+        hole = begin;
+    }
+    arr[hole] = key; //相遇结束，将key填入坑位
+
+    return hole;
 }
 //前后指针法
-int PartSort3()
+//思路:cur指针（后）找比key小的值停住，然后prev指针找大，然后交换两值，最后cur结束后，prev处的值与key交换。重复
+//cur与prev之间的值都是比key大的值，就像是把大的值往后推
+int PartSort3(int* arr, int begin, int end)
 {
+    int midi = GetMidi(arr, begin, end);
+    Swap(&arr[midi], &arr[begin]);
 
+    int prev = begin, cur = prev + 1;
+    int keyi = begin;
+
+    while(cur <= end) //cur < end最后一个值就进不去
+    {
+        //简化
+        if(arr[cur] < arr[keyi] && ++prev != cur)//只有cur处的值比key小时才进去，其他情况就++cur
+            Swap(&arr[prev], &arr[cur]);
+        ++cur;
+
+        // if(arr[cur] < arr[keyi])//只有cur处的值比key小时才进去，其他情况就++cur
+        // {
+        //     ++prev; //注意cur与prev之间的值都是比key大的值，所以prev++一下就行
+        //     Swap(&arr[prev], &arr[cur]);
+        //     ++cur;
+        // }
+        // else
+        // {
+        //     ++cur;
+        // }
+    }
+    Swap(&arr[keyi], &arr[prev]);
+    keyi = prev;
+
+    return keyi;
 }
 
+//三数取中选key，解决数据重复导致效率减慢的问题
 int GetMidi(int* arr, int begin, int end)
 {
     int midi = (begin + end) / 2;
