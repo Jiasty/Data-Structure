@@ -64,7 +64,7 @@ void QuickSortNonR(int* arr, int begin, int end)
 
         //[begin, keyi - 1] keyi [keyi + 1, end]
         //再次入区间
-        if(left < keyi - 1) //判断为了！！！！！！
+        if(left < keyi - 1) //判断为了避免某一段区间没有值或只有一个值还去分割
         {
             StackPush(&ST, keyi - 1);
             StackPush(&ST, left);
