@@ -62,7 +62,7 @@ public:
         return true;
     }
 
-    bool Find(const K& key)
+    Node* Find(const K& key)
     {
         Node* cur = _root;
         while(cur)
@@ -72,10 +72,10 @@ public:
             else if(key < cur->_key)
                 cur = cur->_left;
             else
-                return true;
+                return cur;
         }
 
-        return false;
+        return nullptr;
     }
 
     bool Erase(const K& key)
@@ -149,7 +149,7 @@ public:
                     }
                     
                     swap(cur->_key, leftmax->_key);
-                    //leftmax = cur后要更改一下链接关系
+                    //leftmax = cur后要更改一下链接关系！！！
                     //maxParent->_right = leftmax->_left; 会在删除_root时将右子树删除掉
                     if(leftmax == maxParent->_left)
                         maxParent->_left = leftmax->_left;
