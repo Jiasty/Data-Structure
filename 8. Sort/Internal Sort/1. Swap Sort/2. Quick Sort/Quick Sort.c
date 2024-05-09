@@ -4,6 +4,9 @@
 void QuickSort(int* arr, int begin, int end);
 void QuickSortNonR(int* arr, int begin, int end);
 
+void QuickSort_Trisection(int* arr, int begin, int end);
+int GetRandom(int* arr, int begin, int end);
+
 int PartSort1(int* arr, int begin, int end);
 int PartSort2(int *arr, int begin, int end);
 int PartSort3(int *arr, int begin, int end);
@@ -17,7 +20,8 @@ int main()
     int a[] = {6, 1, 2, 6, 7, 9, 6, 3, 4, 5, 10, 8};
 
     //QuickSort(a, 0, sizeof(a) / sizeof(a[0]) - 1);
-    QuickSortNonR(a, 0, sizeof(a) / sizeof(a[0]) - 1);
+    //QuickSortNonR(a, 0, sizeof(a) / sizeof(a[0]) - 1);
+    QuickSort_Trisection(a, 0, sizeof(a) / sizeof(a[0]) - 1);
 	for (int i = 0; i < sizeof(a) / sizeof(a[0]); i++)
 	{
 		printf("%d ", a[i]);
@@ -221,4 +225,44 @@ void Swap(int* p1, int* p2)
     int tmp = *p1;
     *p1 = *p2;
     *p2 = tmp;
+}
+
+
+///////////////////////////////////////////////////////////
+//三分数组方式优化 < = >
+void QuickSort_Trisection(int* arr, int begin, int end)
+{
+    if(begin >= end)
+        return;
+
+    //数组分三块
+    int key = GetRandom(arr, begin, end);
+    int left = begin - 1, right = end + 1;
+    int i = begin;
+
+    while(i < right)
+    {
+        if(arr[i] < key)
+        {
+            Swap(&arr[++left], &arr[i++]);
+        }
+        else if(arr[i] == key)
+        {
+            i++;
+        }
+        else
+        {
+            Swap(&arr[--right], &arr[i]);
+        }
+    }
+
+    //[begin, left] [left + 1, right - 1] [right, end];
+    QuickSort_Trisection(arr, begin, left);
+    QuickSort_Trisection(arr, right, end);
+}
+
+int GetRandom(int* arr, int begin, int end)
+{
+    int r = rand();
+    return arr[(r % (end - begin + 1)) + begin];
 }
