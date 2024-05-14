@@ -261,7 +261,7 @@ public:
 			subLR->_parents = parent;
 
         subL->_right = parent;
-        Node* p = parent->_parents;
+        Node* p = parent->_parents; //一定先记住而不是需要判断的时候才用，因为下面一条语句已经将原始数据更改
         parent->_parents = subL;
 
         if(parent == _root)
@@ -294,12 +294,12 @@ public:
         Node* subRL = subR->_left;
 
 
-        parent->_left = subRL;
+        parent->_right = subRL;
         if(subRL)//一定要判断一下subL的右子树是否存在，否则subLR->_parent解引用会报错
 			subRL->_parents = parent;
 
         subR->_left = parent;
-        Node* p = parent->_parents;
+        Node* p = parent->_parents; 
         parent->_parents = subR;
 
         if(parent == _root)
@@ -429,14 +429,14 @@ private:
         //此处一定不能判断为正确就返回true，因为不保证下面的树为AVL树
         if(abs(rightHeigh - leftHeigh) >= 2)
         {
-            cout << root->_kv.first << endl; //第几次插入就不是
+            cout << "K:" << root->_kv.first << endl;
             return false;
         }
 
         //顺便检查平衡因子
         if(rightHeigh - leftHeigh != root->_bf)
         {
-            cout << root->_kv.first << endl; //第几个bf错误
+            cout << "bf:" << root->_kv.first << endl;
             return false;
         }
 
