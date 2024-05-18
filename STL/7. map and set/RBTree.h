@@ -1,15 +1,6 @@
+#pragma once
 #include<iostream>
-
 using namespace std;
-
-//规则:
-//1.结点颜色不是黑就是红
-//2.根节点为黑色
-//3.红色结点的两个孩子结点都是黑色，红色结点不能连续出现，黑色结点可以
-//4.对于每个结点，从该结点到其所有后代叶子结点的简单路径上，黑色结点的数目相同
-//5.每个叶子结点都是黑色的(指NIL，非传统的叶子结点，这里是空结点)
-
-//为何满足上述性质，红黑树就能保证:其最长路径的结点数不超过最短路径结点的两倍？
 
 enum Color
 {
@@ -17,49 +8,64 @@ enum Color
     BLACK
 };
 
-template<class K, class V>
+//改红黑树，泛型编程来确定k还是kv模型
+template<class T>
 struct RBTreeNode
 {
-    RBTreeNode<K, V>* _left;
-    RBTreeNode<K, V>* _right;
-    RBTreeNode<K, V>* _parent;
-    pair<K, V> _kv;
+    RBTreeNode<T>* _left;
+    RBTreeNode<T>* _right;
+    RBTreeNode<T>* _parent;
+    T _data;
 
     Color _col;
 
-    RBTreeNode(const pair<K, V>& kv)
+    RBTreeNode(const T& data)
         :_left(nullptr)
         ,_right(nullptr)
         ,_parent(nullptr)
-        ,_kv(kv)
+        ,_data(data)
         ,_col(RED)
     {}
 };
 
-template<class K, class V>
+template<class T, class Ref, class Ptr>
+struct __RBTreeIterator
+{
+    typedef __RBTreeIterator<T, Ref, Ptr> Self;
+
+    Self& operator!=(const Self& s)
+    {
+        
+    }
+};
+
+//此处的K模板参数一定不能删，因为此时实在RBTree.h里面改，需要map和set都照顾，未实例化前不知道到底是map还是set，find时map和set不同
+template<class K, class T, class KerOfT>
 class RBTree
 {
-    typedef RBTreeNode<K, V> Node;
+    typedef RBTreeNode<T> Node;
 public:
-    bool Insert(const pair<K, V>& kv)
+    bool Insert(const T& data)
     {
         if(_root == nullptr)
         {
-            _root = new Node(kv);
+            _root = new Node(data);
             _root->_col = BLACK;
             return true;
         }
 
+        KerOfT kot;
         Node* cur = _root, *parent = nullptr;
         while(cur)
         {
-            if(kv.first < cur->_kv.first)
+            //此处data可能为pair之间比较，pair本身的比较不符合预期
+            //需要借助仿函数来确定data的key，需要从map和set层实例化可传过来!!!!!!!!
+            if(kot(data) < kot(cur->_data))
             {
-                //此处单独用parent来记录而不用cur->_parent记录的原因cur会走到空
                 parent = cur;
                 cur = cur->_left;
             }
-            else if(kv.first > cur->_kv.first)
+            else if(kot(data) > kot(cur->_data))
             {
                 parent = cur;
                 cur = cur->_right;
@@ -68,11 +74,8 @@ public:
                 return false;
         }
 
-        //新插入结点红色好还是黑色好？
-        //红色好，插入黑色会破坏原本的RBTree性质4，可能导致每条路径的黑色结点数不同(规则4一定不要破坏)
-        //而插入红色就只可能破坏性质3，性质3破坏可以往上调整，而性质4可不好调整，全局都会被破坏
-        cur = new Node(kv); //cur走完上面的while循环就已经为空，可以使用来申请新的结点来链接
-        if(kv.first < parent->_kv.first)
+        cur = new Node(data);
+        if(kot(data) < kot(parent->_data))
         {
             parent->_left = cur;
         }
@@ -82,11 +85,6 @@ public:
         }
         cur->_parent = parent;
 
-        //往上调整颜色:cur父亲为黑色直接结束，为红色才需要调整
-        //红色调整主要看uncle的颜色来决定需不需要旋转。需要调整前提:cur为RED，p肯定为RED,g肯定为黑
-        //（插入引起颜色调整也有很多情况，当子树黑色结点数为0、1、2...等情况（1 2就是中间的情况），画图）
-        //1.cur为红，p为红，g为黑，u为红 :p和u变黑，g变红（g为根就重新变为黑），如果g的p也为红就得继续往上调整
-        //2.cur为红，p为红，g为黑，u不存在/u为黑 :先正常变色，然后旋转（单双旋）
         while(parent && parent->_col == RED)
         {
             //找叔叔判断
@@ -169,19 +167,19 @@ public:
         return true;
     }
 
-    bool Erase()
-    {
+    // bool Erase()
+    // {
         
-    }
+    // }
     
-    bool Find(const pair<K, V>& kv)
+    bool Find(const T& data)
     {
         Node* cur = _root;
         while(cur)
         {
-            if(kv.first > cur->_kv.first)
+            if(kot(data) > kot(cur->_data))
                 cur = cur->_right;
-            else if(kv.first < cur->_kv.first)
+            else if(kot(data) < kot(cur->_data))
                 cur = cur->_left;
             else
                 return cur;
@@ -325,3 +323,5 @@ private:
     Node* _root = nullptr;
     size_t _size = 0; //记录结点数
 };
+
+
