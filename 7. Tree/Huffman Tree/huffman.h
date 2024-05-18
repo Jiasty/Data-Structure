@@ -2,24 +2,20 @@
 #include <string.h>
 
 //类型定义
-//M=n0+n1+n2 M=0*n0+1*n1+2*n2+1=n1+2*n2+1 故n0=n2+1
-//Huffman树中无度为的顶点，即n1=0
-//M=(n0)+(n1)+(n2)=(n2+1)+0+(n2)=2*n2+1
-//M=(n0)+(n1)+(n2)=(n0)+0+(n0-1)=2*n0-1
 #define n 100 //叶子结点数
 #define m 2*n-1 //赫夫曼树中结点总数
 
 //每个字符的Huffman编码
-typedef struct {
+typedef struct{
     char ch;
     char bits[n+1]; //存放编码位串，最长n-1位，注意还有串尾符，故char bits[n]即可
     int len; //编码长度
 }CodeNode;
 
 //Huffman码书 是所有字符的Huffman编码的汇总
-typedef CodeNode HuffmanCode[n+1];//0号单元不用
+typedef CodeNode HuffmanCode[n+1];//0号单元不用。HuffmanCode是一个数组类型（包含n+1个CodeNode元素）
 //Huffman树的结点类型
-typedef struct {
+typedef struct{
     int weight; //权值
     int lchild, rchild, parent; //左右孩子及双亲指针
 }HTNode;
@@ -51,7 +47,7 @@ void coding(HuffmanCode HC, char *str);
 //------------------------------------------------
 //(电文译码)
 //代码文件codefile.txt的译码
-char * decode(HuffmanCode HC);
+char* decode(HuffmanCode HC);
 
 //------------------------------------------------
 //(生成编码)
