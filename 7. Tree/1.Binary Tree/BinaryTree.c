@@ -302,3 +302,20 @@ bool BinaryTreeComplete(BTNode* root)
     QueueDestroy(&q);
     return true;
 }
+
+
+// 二叉树前序遍历
+void PreOrderNonRec(BTNode* root)
+{
+    
+}
+// 二叉树中序遍历
+void InOrderNonRec(BTNode* root)
+{
+
+}
+// 二叉树后序遍历
+void PostOrderNonRec(BTNode* root)
+{
+
+}

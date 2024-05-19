@@ -6,9 +6,12 @@ int jsq(char *s, int cnt[], char str[])
 { //为计算权值做准备
     char *p;
     int i, j, k;
-    int temp[27];
-    for(i=1; i<=26; i++)
-        temp[i]=0;//各字符计数器清零temp[1]为'A'的个数temp[26]为'Z'的个数
+    int temp[27] = {0};
+    
+    //对数组初始化
+    // for(i=1; i<=26; i++)
+    //     temp[i]=0;//各字符计数器清零temp[1]为'A'的个数temp[26]为'Z'的个数
+
     for(p=s; *p!='\0'; p++) 
     { //统计各种字符的个数
         if(*p>='A' && *p<='Z') 
@@ -17,6 +20,7 @@ int jsq(char *s, int cnt[], char str[])
             temp[k]++;
         }
     }
+
     j=0;
     for(i=1; i<=26; i++) //统计有多少字符
         if(temp[i]!=0) 

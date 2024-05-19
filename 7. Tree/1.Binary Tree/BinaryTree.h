@@ -44,3 +44,10 @@ int BinaryTreeHeight(BTNode* root);
 BTNode* BinaryTreeFind(BTNode* root, BTDataType x);
 // 判断二叉树是否是完全二叉树
 bool BinaryTreeComplete(BTNode* root);
+
+// 二叉树前序遍历
+void PreOrderNonRec(BTNode* root);
+// 二叉树中序遍历
+void InOrderNonRec(BTNode* root);
+// 二叉树后序遍历
+void PostOrderNonRec(BTNode* root);
