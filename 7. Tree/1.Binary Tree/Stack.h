@@ -1,10 +1,13 @@
+#pragma once
 #include<stdio.h>
 #include<stdlib.h>
 #include<assert.h>
 #include<stdbool.h>
+#include"BinaryTree.h"
+
 //Sequential Stack 相较于Linked Stack更好，扩容也是少数
 
-typedef int STDataType;
+typedef BTNode* STDataType;
 
 typedef struct Stack
 {
@@ -37,7 +40,7 @@ void StackDestroy(Stack* ps);
 void StackInit(Stack* ps)
 {
     assert(ps);
-
+    
     ps->arr = NULL;
     ps->capacity = 0;
 

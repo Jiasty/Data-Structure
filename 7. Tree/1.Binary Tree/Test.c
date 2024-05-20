@@ -1,11 +1,15 @@
-#include"BinaryTree.h"
+#include"BinaryTree.c"
+
 
 void Test1()
 {
+    int a[] = {1, 4, 5, 3, 2, 9, 6};
+    int i = 0;
     BTNode* Tree1 = CreatTree();
+    PostOrderNonRec(Tree1);
+    printf("\n");
 
-    // PreOrder(Tree1);
-    // printf("\n");
+    //PreOrder(Tree1);
     // InOrder(Tree1);
     // printf("\n");
     // PostOrder(Tree1);
@@ -23,7 +27,7 @@ void Test1()
     
     //printf("%p ",BinaryTreeFind(Tree1, 3));
     
-    printf("%d ",BinaryTreeComplete(Tree1));
+    //printf("%d ",BinaryTreeComplete(Tree1));
 
     BinaryTreeDestory(&Tree1);
 }

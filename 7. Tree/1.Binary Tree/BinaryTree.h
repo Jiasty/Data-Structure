@@ -1,3 +1,4 @@
+#pragma once
 #include<stdio.h>
 #include<stdlib.h>
 #include<assert.h>
@@ -31,6 +32,12 @@ void InOrder(BTNode* root);
 void PostOrder(BTNode* root);
 // 层序遍历
 void LevelOrder(BTNode* root);
+// 二叉树前序遍历
+void PreOrderNonRec(BTNode* root);
+// 二叉树中序遍历
+void InOrderNonRec(BTNode* root);
+// 二叉树后序遍历
+void PostOrderNonRec(BTNode* root);
 
 // 二叉树节点个数
 int BinaryTreeSize(BTNode* root);
@@ -45,9 +52,3 @@ BTNode* BinaryTreeFind(BTNode* root, BTDataType x);
 // 判断二叉树是否是完全二叉树
 bool BinaryTreeComplete(BTNode* root);
 
-// 二叉树前序遍历
-void PreOrderNonRec(BTNode* root);
-// 二叉树中序遍历
-void InOrderNonRec(BTNode* root);
-// 二叉树后序遍历
-void PostOrderNonRec(BTNode* root);

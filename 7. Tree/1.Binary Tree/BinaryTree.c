@@ -1,5 +1,6 @@
 #include"BinaryTree.h"
 #include"Queue.h" //某些接口会用到队列 //为什么不能包在 BinaryTree.h里面?
+#include"Stack.h"
 
 //创建二叉树结点ok
 BTNode* BuyTreeNode(BTDataType x)
@@ -20,23 +21,29 @@ BTNode* BuyTreeNode(BTDataType x)
 //构建树(测试用，直接手动构造)
 BTNode* CreatTree()
 {
-    BTNode* node1 = BuyTreeNode(1);
-	BTNode* node2 = BuyTreeNode(2);
-	BTNode* node3 = BuyTreeNode(3);
-	BTNode* node4 = BuyTreeNode(4);
-	BTNode* node5 = BuyTreeNode(5);
-	BTNode* node6 = BuyTreeNode(6);
-	BTNode* node7 = BuyTreeNode(7);
+    BTNode *root = BuyTreeNode(1);
+    root->left = BuyTreeNode(2);
+    root->right = BuyTreeNode(3);
+    root->left->left = BuyTreeNode(4);
+    root->left->right = BuyTreeNode(5);
+    root->right->left = BuyTreeNode(6);
+    root->right->right = BuyTreeNode(7);
+    // BTNode* node1 = BuyTreeNode(1);
+	// BTNode* node2 = BuyTreeNode(2);
+	// BTNode* node3 = BuyTreeNode(3);
+	// BTNode* node4 = BuyTreeNode(4);
+	// BTNode* node5 = BuyTreeNode(5);
+	// BTNode* node6 = BuyTreeNode(6);
+	// BTNode* node7 = BuyTreeNode(7);
 
+	// node1->left = node2;
+	// node1->right = node4;
+	// node2->left = node3;
+	// node4->left = node5;
+	// node4->right = node6;
+	// node5->right = node7;
 
-	node1->left = node2;
-	node1->right = node4;
-	node2->left = node3;
-	node4->left = node5;
-	node4->right = node6;
-	node5->right = node7;
-
-	return node1;
+	return root;
 }
 // 通过前序遍历的数组"ABD##E#H##CF##G##"构建二叉树！！！
 // pi 是什么? 是下标的地址
@@ -307,15 +314,88 @@ bool BinaryTreeComplete(BTNode* root)
 // 二叉树前序遍历
 void PreOrderNonRec(BTNode* root)
 {
+    if(root == NULL)
+        return;
+
+    Stack* s;
+    StackInit(s);
+
+    StackPush(s, root);
+    while(!StackEmpty(s))
+    {
+        //保存栈顶结点
+        BTNode* tmp = StackTop(s);
+        printf("%d ", tmp->data);
+        StackPop(s);
+
+        if(tmp->right)
+            StackPush(s, tmp->right);
+        if(tmp->left)
+            StackPush(s, tmp->left);
+    }
+    
+    StackDestroy(s);
     
 }
 // 二叉树中序遍历
 void InOrderNonRec(BTNode* root)
 {
+    if(root == NULL)
+        return;
 
+    Stack* s;
+    StackInit(s);
+
+    BTNode* cur = root;
+    while(cur || !StackEmpty(s))
+    {
+        while(cur)
+        {
+            //一直入左结点
+            StackPush(s, cur);
+            cur = cur->left;
+        }
+        //此时栈顶的结点没有左子树
+        cur = StackTop(s);
+        printf("%d ", cur->data);
+        StackPop(s);
+        cur = cur->right;
+    }
+
+    StackDestroy(s);
 }
 // 二叉树后序遍历
 void PostOrderNonRec(BTNode* root)
 {
+    if(root == NULL)
+        return;
 
+    Stack* s;
+    StackInit(s);
+
+    BTNode* cur = root, *prev = root;
+    while(cur || !StackEmpty(s))
+    {
+        //沿着左子树入栈
+        while(cur)
+        {
+            StackPush(s, cur);
+            cur = cur->left;
+        }
+        cur = StackTop(s); //cur走到空出循环取栈顶元素
+
+        //如果栈顶元素有右子树且未被访问则入栈
+        if(cur->right && cur->right != prev)
+        {
+            cur = cur->right;
+        }
+        else //访问过或没有
+        {
+            printf("%d ", cur->data);
+            prev = cur; //访问了才记录
+            cur = NULL; //防止一直访问原来的左子树
+            StackPop(s);
+        }
+    }
+    StackDestroy(s);
 }
