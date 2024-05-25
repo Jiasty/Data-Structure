@@ -45,6 +45,18 @@ class RBTree
 {
     typedef RBTreeNode<T> Node;
 public:
+    RBTree() = default; //default强制生成构造函数
+
+    RBTree(const RBTree<K, T, KerOfT>& t)
+    {
+
+    }
+
+    ~RBTree()
+    {
+
+    }
+
     bool Insert(const T& data)
     {
         if(_root == nullptr)
