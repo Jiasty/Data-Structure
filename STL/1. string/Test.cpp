@@ -59,6 +59,8 @@ void test3()
     cout << str1.c_str() << endl;
     str1.insert(0, 'x');
     cout << str1.c_str() << endl;
+    str1.insert(6,"yyyyyy");
+    cout << str1.c_str() << endl;
 
     str1.erase(5, 3);
     cout << str1.c_str() << endl;
@@ -72,6 +74,24 @@ void test4()
     Jiastystring::string str1("hello world");
 
     Jiastystring::string str2 = str1;//不深拷贝就会在析构时释放两次
+
+    cout << str1.find("wor") << endl;
+
+    Jiastystring::string tmp = str1.substr(3, 66);
+    cout << tmp.c_str() << endl;
+
+}
+
+void test5()
+{
+    //关系比较
+
+    //io
+    Jiastystring::string str2;
+
+    cin >> str2;
+    cout << str2;
+
 }
 
 int main()
@@ -79,6 +99,7 @@ int main()
     //test1();
     //test2();
     //test3();
-    test4();
+    //test4();
+    test5();
     return 0;
 }
