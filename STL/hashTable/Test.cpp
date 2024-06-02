@@ -1,12 +1,12 @@
 #include"hashTable.h"
 
-void test1()
-{
-    
-}
+using namespace open_address;
 
 int main()
 {
+    //TestHT1();
+    //TestHT2();
+    TestHT3();
 
     return 0;
 }
