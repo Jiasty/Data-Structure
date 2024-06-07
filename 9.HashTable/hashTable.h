@@ -222,18 +222,41 @@ namespace open_address
 
 namespace hash_bucket
 {
-    template<class K, class V>
-    class hashData
+    template<class T>
+    class hashNode
     {
-        pair<K, V> _kv;
+        T _data;
+        hashNode<T>* _next;
+
+        hashNode(const T& data)//哈希结点创造出来一定有值
+            :_data(data)
+            ,_next(nullptr)
+        {}
     };
 
-    template<class K, class V>
+    template<class K, class T>
     class hashTable
     {
+        typedef hashNode<T> Node;
     public:
 
-    private:
+    bool Insert(const Node& node)
+    {
 
+    }
+
+    bool Erase()
+    {
+
+    }
+
+    Node* Find(const K& key)
+    {
+        
+    }
+
+    private:
+    vector<Node*> _table;
+    size_t _n;
     };
 }
