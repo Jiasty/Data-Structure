@@ -1,7 +1,6 @@
+#pragma once
 #include<iostream>
 #include<vector>
-
-using namespace std;
 
 template<class T>
 class UnionFindSet
@@ -21,7 +20,10 @@ public:
         if(root1 == root2)
             return;
 
-        //开始合并 x2 -> x1
+        //开始合并 小优化:个数少的往个数多的合并，这样只有较少的数的层数增加
+        if(abs(_ufs[root1]) < abs(_ufs[root2]))
+            swap(root1, root2);
+
         _ufs[root1] += _ufs[root2];
         _ufs[root2] = root1;
     }
@@ -58,5 +60,6 @@ public:
         return total;
     }
 private:
-    vector<int> _ufs;  //假设给的就是编号
+    vector<T> _ufs;  //假设给的就是编号
+    //map
 };

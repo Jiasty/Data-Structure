@@ -1,5 +1,6 @@
 #include"UnionFindSet.h"
 
+using namespace std;
 
 void test_UnionFindSet()
 {
