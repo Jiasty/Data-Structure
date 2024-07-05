@@ -11,11 +11,12 @@ public:
     {}
 
     UnionFindSet(const T* arr, size_t n)
+        :_ufs(n, -1)
     {
         for(int i = 0; i < n; i++)
         {
             //构建映射关系
-            _ufs.push_back(arr[i]);
+            _persons.push_back(arr[i]);
             _IndexMap[arr[i]] = i;
         }
     }
@@ -79,7 +80,8 @@ public:
         return total;
     }
 private:
-    vector<T> _ufs;  //此时假设给的就是编号
+    vector<int> _ufs;  //此时假设给的就是编号
+    vector<T> _persons; //编号找人
     map<T, int> _IndexMap;
     //T不是数字的时候用map来构成映射关系
     //假设 UnionFindSet<string> ufs(n); 可以用map<string, int> 构成映射关系，转换为编号
