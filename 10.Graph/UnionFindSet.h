@@ -1,6 +1,6 @@
 #pragma once
-#include<iostream>
 #include<vector>
+#include<map>
 
 template<class T>
 class UnionFindSet
@@ -9,6 +9,16 @@ public:
     UnionFindSet(size_t n)
         :_ufs(n, -1)  //初始状态给 -1
     {}
+
+    UnionFindSet(const T* arr, size_t n)
+    {
+        for(int i = 0; i < n; i++)
+        {
+            //构建映射关系
+            _ufs.push_back(arr[i]);
+            _IndexMap[arr[i]] = i;
+        }
+    }
 
     //合并集合
     void Union(int x1, int x2)
@@ -69,6 +79,8 @@ public:
         return total;
     }
 private:
-    vector<T> _ufs;  //假设给的就是编号
-    //map
+    vector<T> _ufs;  //此时假设给的就是编号
+    map<T, int> _IndexMap;
+    //T不是数字的时候用map来构成映射关系
+    //假设 UnionFindSet<string> ufs(n); 可以用map<string, int> 构成映射关系，转换为编号
 };
