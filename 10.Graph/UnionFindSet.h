@@ -49,7 +49,6 @@ public:
         }
 
         //路径压缩
-        
         while(_ufs[x] >= 0)
         {
             int parent = _ufs[x];
