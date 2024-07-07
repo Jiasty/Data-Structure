@@ -80,7 +80,7 @@ namespace link_matrix
             int n = _vertexes.size();
             while(n)
             {
-                cout << 4 - n << " ";
+                cout << _vertexes.size() - n << " ";
                 --n;
             }
             cout << endl;
@@ -180,7 +180,7 @@ namespace link_matrix
         W Kruskal(Self& miniTree)  //求一整个图的最小生成树，参数为一个无向图(类似输出型参数)
         {
             size_t n = _matrix.size(); //记录行列数
-            //初始化miniTree,其实就是拷贝一份当前图对象
+            //初始化miniTree
             miniTree._vertexes = _vertexes;
             miniTree._indexMap = _indexMap;
             miniTree._matrix.resize(n);
@@ -245,6 +245,23 @@ namespace link_matrix
         }
 
         //2、Prim算法
+        W Prim(Self& miniTree, const V& src)
+        {
+            size_t GetVertexIndex(src);
+            size_t n = _matrix.size(); //记录行列数
+            miniTree._vertexes = _vertexes;
+            miniTree._indexMap = _indexMap;
+            miniTree._matrix.resize(n);
+            for(size_t i = 0; i < n; i++)
+            {
+                miniTree._matrix[i].resize(n, MAX_W);
+            }
+        }
+
+
+        //最短路径问题（一般针对有向图）
+        //1.Dijkstra算法
+        
 
     private:
         vector<V> _vertexes;  //顶点集合
