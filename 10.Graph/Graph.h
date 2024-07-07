@@ -3,7 +3,7 @@
 #include<map>
 #include<string> // <<重载打印string可能在string头文件里
 #include<queue>
-
+#include<functional>
 
 
 namespace link_matrix
@@ -14,8 +14,7 @@ namespace link_matrix
     {
         typedef Graph<V, W, MAX_W, Direction> Self;  //以便后面相关算法传参数
     public:
-        Graph()
-        {}
+        Graph() = default;
 
         Graph(const V* arr, size_t n)
         {
@@ -160,9 +159,89 @@ namespace link_matrix
         //如果定义了一个有向图，会不会使用到该方法？？？
         //构造最小生成树的方法（接近最优解），针对连通图
         //1、Kruskal算法
-        W Kruskal(const Self& miniTree)  //求一整个图的最小生成树，参数为一个无向图
+        struct Edge //为kruskal算法创建来描述边
         {
+            size_t _srci;
+            size_t _dsti;
+            W _w;
 
+            Edge(size_t srci, size_t dsti, const W& w)
+                :_srci(srci)
+                ,_dsti(dsti)
+                ,_w(w)
+            {}
+
+            bool operator>(const Edge& e) const
+            {
+                return _w > e._w;
+            }
+        };
+
+        W Kruskal(Self& miniTree)  //求一整个图的最小生成树，参数为一个无向图(类似输出型参数)
+        {
+            size_t n = _matrix.size(); //记录行列数
+            //初始化miniTree,其实就是拷贝一份当前图对象
+            miniTree._vertexes = _vertexes;
+            miniTree._indexMap = _indexMap;
+            miniTree._matrix.resize(n);
+            for(size_t i = 0; i < n; i++)
+            {
+                miniTree._matrix[i].resize(n, MAX_W);
+            }
+
+            //创建一个优先级队列，将所有的边存进去,以便后面选择权值最小的边
+            priority_queue<Edge, vector<Edge>, greater<Edge>> min_que; //复习优先级队列和仿函数
+            
+            for(int i = 0; i < n; ++i) //将边装入pri_que
+            {
+                for(int j = 0; j < n; ++j)
+                {
+                    if(i < j && _matrix[i][j] != MAX_W) //i > j的目的是避免无向图入同一条边！！！
+                    {
+                        min_que.push(Edge(i, j, _matrix[i][j]));
+                    }
+                }
+            }
+
+            //开始选边（n-1条，不构成环）为了防止构成环，需要UnionFindSet的帮助
+            UnionFindSet<int> ufs(n);
+            int aim = 0;
+            W total = W();
+            while(!min_que.empty())
+            {
+                Edge min = min_que.top();
+                min_que.pop();
+
+                if(!ufs.InSet(min._srci, min._dsti))
+                {
+                    cout << _vertexes[min._srci] << "->" << _vertexes[min._dsti] <<":"<<min._w << endl;
+                    miniTree._matrix[min._srci][min._dsti] = min._w;
+
+                    //无向图的情况
+                    if(Direction == false)
+                    {
+                        miniTree._matrix[min._dsti][min._srci] = min._w;
+                    }
+
+                    ufs.Union(min._srci, min._dsti);
+                    total += min._w;
+                    ++aim;
+                }
+                else
+                {
+                    cout << "there is circle!" << endl;
+                    cout << _vertexes[min._srci] << "->" << _vertexes[min._dsti] << ":" << min._w << endl;
+                }
+            }
+
+            if(aim == n-1)
+            {
+                return total;
+            }
+            else
+            {
+                return W();
+            }
         }
 
         //2、Prim算法
