@@ -28,6 +28,12 @@ namespace link_matrix
                 if (_matrix[srci][i] != MAX_W && visited[i] == false)
                     _DFS(i, visited);
         }
+        void _AddEdge(size_t srci, size_t dsti, const W &w)
+        {
+            _matrix[srci][dsti] = w;
+            // 无向图的情况
+            if (Direction == false) _matrix[dsti][srci] = w;
+        }
     public:
         Graph() = default;
         // 默认最大值由外部控制
@@ -60,11 +66,7 @@ namespace link_matrix
         {
             size_t srci = GetVertexIndex(src);
             size_t dsti = GetVertexIndex(dst);
-
-            _matrix[srci][dsti] = w;
-
-            // 无向图的情况
-            if (Direction == false) _matrix[dsti][srci] = w;
+            _AddEdge(srci, dsti, w);
         }
 
         void Print()
@@ -178,11 +180,7 @@ namespace link_matrix
                 if (!ufs.InSet(min._srci, min._dsti))
                 {
                     cout << _vertexes[min._srci] << "->" << _vertexes[min._dsti] << ": " << min._w << endl;
-                    miniTree._matrix[min._srci][min._dsti] = min._w;
-
-                    // 无向图的情况
-                    if (Direction == false)
-                        miniTree._matrix[min._dsti][min._srci] = min._w;
+                    miniTree._AddEdge(min._srci, min._dsti, min._w);
 
                     ufs.Union(min._srci, min._dsti);
                     total += min._w;
@@ -233,10 +231,7 @@ namespace link_matrix
                         min_que.push(Edge(min._dsti, k, _matrix[min._dsti][k]));
 
                 cout << _vertexes[min._srci] << "->" << _vertexes[min._dsti] << ": " << min._w << endl;
-                miniTree._matrix[min._srci][min._dsti] = min._w;
-                // 无向图的情况
-                if (Direction == false)
-                    miniTree._matrix[min._dsti][min._srci] = min._w;
+                miniTree._AddEdge(min._srci, min._dsti, min._w);
 
                 total += min._w;
                 ++edge_size;

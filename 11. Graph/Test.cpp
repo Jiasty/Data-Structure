@@ -1,10 +1,9 @@
-#include<iostream>
+#include <iostream>
 #include <string.h>
+#include "UnionFindSet.h"
+#include "Graph.h"
+
 using namespace std;
-
-#include"UnionFindSet.h"
-#include"Graph.h"
-
 
 void test_UnionFindSet()
 {
@@ -18,7 +17,7 @@ void test_UnionFindSet()
 
 void TestGraph1()
 {
-	link_matrix::Graph<char, int, INT_MAX, true> g("0123", 4); //为何一定要显示给INT_MAX，不是有缺省值吗？？？
+	link_matrix::Graph<char, int, true> g("0123", 4, INT_MAX);
 	g.AddEdge('0', '1', 1);
 	g.AddEdge('0', '3', 4);
 	g.AddEdge('1', '3', 2);
@@ -34,7 +33,7 @@ void TestGraph1()
 void TestGraph2()
 {
 	string a[] = { "张三", "李四", "王五", "赵六" };
-	link_table::Graph<string, int, true> g1(a, 4); //为何没有删除MAX_W时true无效，缺省值为何未起作用？？？
+	link_table::Graph<string, int, true> g1(a, 4);
 	g1.AddEdge("张三", "李四", 100);
 	g1.AddEdge("张三", "王五", 200);
 	g1.AddEdge("王五", "赵六", 30);
@@ -44,11 +43,11 @@ void TestGraph2()
 void TestBFSAndDFS()
 {
 	string a[] = { "张三", "李四", "王五", "赵六" };
-	link_matrix::Graph<string, int> g1(a, 4); //为何没有删除MAX_W时true无效，缺省值为何未起作用？？？
+	link_matrix::Graph<string, int> g1(a, 4, INT_MAX);
 	g1.AddEdge("张三", "李四", 100);
 	g1.AddEdge("张三", "王五", 200);
 	g1.AddEdge("王五", "赵六", 30);
-	//g1.Print();
+	// g1.Print();
 	g1.BFS("王五");
 	cout << endl;
 	g1.DFS("王五");
@@ -58,7 +57,7 @@ void TestBFSAndDFS()
 void TestGraphMinTree()
 {
 	const char* str = "abcdefghi";
-	link_matrix::Graph<char, int> g(str, strlen(str));
+	link_matrix::Graph<char, int> g(str, strlen(str), INT_MAX);
 	g.AddEdge('a', 'b', 4);
 	g.AddEdge('a', 'h', 8);
 	g.AddEdge('a', 'h', 9);
@@ -77,17 +76,17 @@ void TestGraphMinTree()
 	link_matrix::Graph<char, int> kminTree;
 	cout << "Kruskal:" << g.Kruskal(kminTree) << endl;
 	kminTree.Print();
-	//link_matrix::Graph<char, int> pminTree;
-	//cout << "Prim:" << g.Prim(pminTree, 'a') << endl;
-	//pminTree.Print();
+	// link_matrix::Graph<char, int> pminTree;
+	// cout << "Prim:" << g.Prim(pminTree, 'a') << endl;
+	// pminTree.Print();
 }
 
 int main()
 {
-    //test_UnionFindSet();
-    //TestGraph1();
-	//TestGraph2();
-	//TestBFSAndDFS();
+    test_UnionFindSet();
+    TestGraph1();
+	TestGraph2();
+	TestBFSAndDFS();
 	TestGraphMinTree();
 
     return 0;
