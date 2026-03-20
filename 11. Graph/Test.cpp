@@ -9,10 +9,12 @@ void test_UnionFindSet()
 {
     UnionFindSet<int> ufs(5);
 
+	cout << "集合数" << ufs.SetSize() << endl;
+	cout << "合并2 4" << endl;
     ufs.Union(2, 4);
-    cout << ufs.Findroot(4) << endl;
-    cout << ufs.SetSize() << endl;
-    cout << ufs.InSet(1, 4) << endl;
+    cout << "4所在集合的根: " << ufs.FindRoot(4) << endl;
+    cout << "集合数" << ufs.SetSize() << endl;
+    cout << "1和4是否在一个集合: " << (ufs.InSet(1, 4) ? "true" : "false") << endl;
 }
 
 void TestGraph1()
@@ -81,13 +83,48 @@ void TestGraphMinTree()
 	// pminTree.Print();
 }
 
+
+void TestGraphDijkstra()
+{
+	const char* str = "syztx";
+	link_matrix::Graph<char, int, true> g(str, strlen(str), INT_MAX);
+	g.AddEdge('s', 't', 10);
+	g.AddEdge('s', 'y', 5);
+	g.AddEdge('y', 't', 3);
+	g.AddEdge('y', 'x', 9);
+	g.AddEdge('y', 'z', 2);
+	g.AddEdge('z', 's', 7);
+	g.AddEdge('z', 'x', 6);
+	g.AddEdge('t', 'y', 2);
+	g.AddEdge('t', 'x', 1);
+	g.AddEdge('x', 'z', 4);
+	vector<int> dist;
+	vector<int> parentPath;
+	g.Dijkstra('s', dist, parentPath);
+	g.PrinrtShotPath('s', dist, parentPath);
+	// 图中带有负权路径时，贪心策略则失效了。
+	// 测试结果可以看到s->t->y之间的最短路径没更新出来
+	/*const char* str = "sytx";
+	Graph<char, int, INT_MAX, true> g(str, strlen(str));
+	g.AddEdge('s', 't', 10);
+	g.AddEdge('s', 'y', 5);
+	g.AddEdge('t', 'y', -7);
+	g.AddEdge('y', 'x', 3);
+	vector<int> dist;
+	vector<int> parentPath;
+	g.Dijkstra('s', dist, parentPath);
+	g.PrinrtShotPath('s', dist, parentPath);*/
+}
+
+
 int main()
 {
-    test_UnionFindSet();
-    TestGraph1();
-	TestGraph2();
-	TestBFSAndDFS();
-	TestGraphMinTree();
+    // test_UnionFindSet();
+    // TestGraph1();
+	// TestGraph2();
+	// TestBFSAndDFS();
+	// TestGraphMinTree();
+	TestGraphDijkstra();
 
     return 0;
 }

@@ -4,6 +4,7 @@
 #include <string> // <<重载打印string可能在string头文件里
 #include <queue>
 #include <functional>
+#include <algorithm>
 #include "UnionFindSet.h"
 
 namespace link_matrix
@@ -23,9 +24,9 @@ namespace link_matrix
             visited[srci] = true;
 
             // 找srci相邻顶点且未访问
-            size_t row_size = _matrix.size()
+            size_t row_size = _matrix.size();
             for (size_t i = 0; i < row_size; i++)
-                if (_matrix[srci][i] != MAX_W && visited[i] == false)
+                if (_matrix[srci][i] != defaultWeight && visited[i] == false)
                     _DFS(i, visited);
         }
         void _AddEdge(size_t srci, size_t dsti, const W &w)
@@ -38,6 +39,7 @@ namespace link_matrix
         Graph() = default;
         // 默认最大值由外部控制
         Graph(const V *arr, size_t n, const W &MAX_W)
+            : defaultWeight(MAX_W)
         {
             _vertexes.reserve(n);
             for (size_t i = 0; i < n; i++)
@@ -89,7 +91,7 @@ namespace link_matrix
             {
                 cout << i << " ";
                 for (int j = 0; j < _matrix[i].size(); j++)
-                    if (MAX_W == _matrix[i][j]) cout << "* ";
+                    if (defaultWeight == _matrix[i][j]) cout << "* ";
                     else cout << _matrix[i][j] << " ";
                 cout << endl;
             }
@@ -116,7 +118,7 @@ namespace link_matrix
                     cout << _vertexes[front] << "[" << front << "] ";
                     // 出了front就要带入front的邻接顶点
                     for (size_t j = 0; j < num; j++)
-                        if (_matrix[front][j] != MAX_W && visited[j] == false)
+                        if (_matrix[front][j] != defaultWeight && visited[j] == false)
                         {
                             q.push(j);
                             visited[j] = true;
@@ -159,13 +161,13 @@ namespace link_matrix
             // 初始化miniTree
             miniTree._vertexes = _vertexes;
             miniTree._indexMap = _indexMap;
-            miniTree._matrix.assign(n, vector<W>(n, MAX_W));
+            miniTree._matrix.assign(n, vector<W>(n, defaultWeight));
             
             // 创建一个小顶堆(对应greater)，将所有的边存进去,以便后面选择权值最小的边
             priority_queue<Edge, vector<Edge>, greater<Edge>> min_que;
             for (int i = 0; i < n; ++i)
                 for (int j = 0; j < n; ++j)
-                    if (i < j && _matrix[i][j] != MAX_W) // i < j的目的是避免无向图入同一条边
+                    if (i < j && _matrix[i][j] != defaultWeight) // i < j的目的是避免无向图入同一条边
                         min_que.push(Edge(i, j, _matrix[i][j]));
 
             // 开始选边（n-1条，不构成环）为了防止构成环，需要UnionFindSet的帮助
@@ -206,14 +208,14 @@ namespace link_matrix
             // 初始化miniTree
             miniTree._vertexes = _vertexes;
             miniTree._indexMap = _indexMap;
-            miniTree._matrix.assign(n, vector<W>(n, MAX_W));
+            miniTree._matrix.assign(n, vector<W>(n, defaultWeight));
             
             // 先将start的邻接边入队
             vector<bool> visited(n, false);
             visited[start] = true;
             priority_queue<Edge, vector<Edge>, greater<Edge>> min_que;
             for(int j = 0; j < n; j++)
-                if(_matrix[start][j] != MAX_W)
+                if(_matrix[start][j] != defaultWeight)
                     min_que.push(Edge(start, j, _matrix[start][j]));
             
             int edge_size = 0;
@@ -227,7 +229,7 @@ namespace link_matrix
 
                 visited[min._dsti] = true;
                 for(int k = 0; k < n; k++)
-                    if(!visited[k] && _matrix[min._dsti][k] != MAX_W)
+                    if(!visited[k] && _matrix[min._dsti][k] != defaultWeight)
                         min_que.push(Edge(min._dsti, k, _matrix[min._dsti][k]));
 
                 cout << _vertexes[min._srci] << "->" << _vertexes[min._dsti] << ": " << min._w << endl;
@@ -241,17 +243,96 @@ namespace link_matrix
         }
 
         ///////////////////////////最短路径问题(一般针对有向图)///////////////////////////
-        // 1.Dijkstra算法
+        // 1.单源最短路径Dijkstra算法(不带负权时)
+        void Dijkstra(const V& src, vector<W>& dist, vector<int>& parentPath)
+        {
+            size_t start = GetVertexIndex(src);
+            size_t n = _vertexes.size();
+            dist.assign(n, defaultWeight);
+            parentPath.assign(n, -1);
+            dist[start] = 0;
+            parentPath[start] = start;
+
+            // 已确定最短路径的顶点集合
+            vector<bool> visited(n, false);
+            priority_queue<pair<W, size_t>, vector<pair<W, size_t>>, greater<pair<W, size_t>>> minVertexQueue;
+            minVertexQueue.push({0, start});
+
+            while(!minVertexQueue.empty())
+            {
+                // 每次确定距离最短的顶点加入 visited 集合
+                pair<W, size_t> curv = minVertexQueue.top();
+                minVertexQueue.pop();
+                size_t u = curv.second;
+                // 非连通图防御
+                if(visited[u]) continue;
+                visited[u] = true;
+
+                // 从已确定最短路径的顶点u进行松弛操作
+                for(int v = 0; v < n; v++)
+                    if(false == visited[v] && 
+                        _matrix[u][v] != defaultWeight && 
+                        _matrix[u][v] + dist[u] < dist[v])
+                    {
+                        dist[v] = _matrix[u][v] + dist[u];
+                        parentPath[v] = u;
+
+                        // 刷新历史最低记录
+                        // 重复入队也没事if(visited[u]) continue;会直接跳过
+                        minVertexQueue.push({dist[v], v}); 
+                    }
+            }
+        }
+
+        // 2.单源最短路径Bellman-Ford算法(带负权时) -- 堆优化后为SPFA算法
+        void Bellman-Ford(const V& src, vector<W>& dist, vector<int>& parentPath)
+        {
+            
+        }
+
+        // 3.多源最短路径Floyd-Warshall算法
+        void Floyd-Warshall()
+        {
+
+        }
+
+        void PrinrtShotPath(const V& src, const vector<W>& dist, const vector<int>& parentPath)
+        {
+            size_t n = _vertexes.size();
+            size_t start = GetVertexIndex(src);
+            for(int i = 0; i < n; i++)
+            {
+                if(start == i) continue;
+
+                vector<int> path;
+                int cur = i;
+                while(cur != start)
+                {
+                    path.push_back(cur);
+                    cur = parentPath[cur];
+                }
+                path.push_back(start);
+                reverse(path.begin(), path.end());  // TODO: reverse
+
+                for(const auto& e : path)
+                {
+                    cout << _vertexes[e] << "->";
+                }
+                cout << dist[i] << endl;
+            }
+        }
 
     private:
         vector<V> _vertexes;         // 顶点集合
         map<V, size_t> _indexMap;    // 顶点映射下标关系，方便构建matrix
         vector<vector<W>> _matrix;   // 邻接矩阵
+        W defaultWeight;             // 默认最大权值
     };
 }
 
 
 
+// 邻接表存储
 namespace link_table
 {
     // 描述边

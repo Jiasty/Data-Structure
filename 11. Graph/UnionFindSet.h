@@ -1,6 +1,7 @@
 #pragma once
-#include<vector>
-#include<map>
+#include <vector>
+#include <map>
+using namespace std;
 
 template<class T>
 class UnionFindSet
@@ -25,8 +26,8 @@ public:
     void Union(int x1, int x2)
     {
         // 保存的原因是后面合并需要用根的位置，但是x1和x2不一定就是根
-        int root1 = Findroot(x1);
-        int root2 = Findroot(x2);
+        int root1 = FindRoot(x1);
+        int root2 = FindRoot(x2);
         // 判断是否在一个集合，不在再合并
         if(root1 == root2) return;
 
@@ -38,7 +39,7 @@ public:
     }
 
     // 寻找该元素所在集合的名称
-    int Findroot(int x)
+    int FindRoot(int x)
     {
         int root_index = x;
         while(_ufs[root_index] >= 0) root_index = _ufs[root_index];
@@ -57,7 +58,7 @@ public:
     // 是否在同一个集合
     bool InSet(int x1, int x2)
     {
-        return Findroot(x1) == Findroot(x2);
+        return FindRoot(x1) == FindRoot(x2);
     }
 
     // 有多少集合
