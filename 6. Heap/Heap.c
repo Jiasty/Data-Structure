@@ -63,7 +63,6 @@ HeapDataType HeapTop(Heap* hp)
 {
     assert(hp);
     assert(hp->size > 0); //assert(hp->arr);注意arr地址可能不为空，但是里面没有插入数据，读出来会是随机值
-    
 
     return hp->arr[0];
 }
@@ -71,14 +70,12 @@ HeapDataType HeapTop(Heap* hp)
 int HeapSize(Heap* hp)
 {
     assert(hp);
-
     return hp->size;
 }
 // 堆的判空，空为true
 bool HeapEmpty(Heap* hp)
 {
     assert(hp);
-
     return hp->size == 0;
 }
 
@@ -119,7 +116,7 @@ void AdjustDown(HeapDataType* a, int size, int parent)
     while(child < size)
     {
         //判断两兄弟大小再更新child
-        if(a[child] > a[child + 1] && child + 1 < size) //child + 1 < size 保证极端情况下右孩子存在
+        if(child + 1 < size && a[child] > a[child + 1]) // child + 1 < size 保证极端情况下右孩子存在
         {
             ++child;
         }

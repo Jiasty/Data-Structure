@@ -28,9 +28,28 @@ void Test1()
     HeapDestory(&h1);
 }
 
+void Test2()
+{
+    Heap h2;
+    HeapCreate(&h2);
+
+    int a[] = { 4,6,2,1 };
+    for (int i = 0; i < sizeof(a) / sizeof(int); ++i)
+	{
+		HeapPush(&h2, a[i]);
+	}
+
+    HeapPrint(&h2);
+    printf("%d \n",HeapTop(&h2));
+    HeapPop(&h2);
+
+    HeapDestory(&h2);
+}
+
 int main()
 {
     Test1();
+    Test2();
 
     return 0;
 }
